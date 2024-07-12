@@ -1,21 +1,19 @@
 pipeline {
     agent any
     environment {
-        PYTHON_ENV = '.venv'
+        PYTHON_ENV = 'venv'
     }
     stages {
         stage("Checkout") {
             steps {
-                // Checkout code from version control
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']],
-                          userRemoteConfigs: [[url: 'https://github.com/tomprogramuje/jenkins_test.git']]])
+                checkout scmGit(branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/tomprogramuje/jenkins_test']])
             }
         }
         stage('Environment setup') {
             steps {
                 sh '''
                 python3 -m venv ${PYTHON_ENV}
-                source ${PYTHON_ENV}/bin/activate
+                . ${PYTHON_ENV}/bin/activate
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 '''
@@ -24,7 +22,7 @@ pipeline {
         stage('Static Analysis') {
             steps {
                 sh '''
-                source ${PYTHON_ENV}/bin/activate
+                . ${PYTHON_ENV}/bin/activate
                 ruff check .
                 mypy .
                 '''
@@ -33,27 +31,17 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 sh '''
-                source ${PYTHON_ENV}/bin/activate
+                . ${PYTHON_ENV}/bin/activate
                 pytest
                 '''
             }
         }
         stage('Deploy and Schedule') {
-            when {
-                branch 'main'
-            }
             steps {
                 sh '''
-                source ${PYTHON_ENV}/bin/activate
-                ./deploy_script.sh
+                . ${PYTHON_ENV}/bin/activate
+                python3 main.py
                 '''
-                script {
-                    // Schedule the script to run daily, if needed
-                    // Example cron job setup (Linux-based)
-                    sh '''
-                    (crontab -l 2>/dev/null; echo "0 0 * * * /path/to/venv/bin/python /path/to/your_daily_script.py") | crontab -
-                    '''
-                }
             }
         }
     }
