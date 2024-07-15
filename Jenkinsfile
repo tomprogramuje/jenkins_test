@@ -40,7 +40,7 @@ pipeline {
             steps {
                 sh '''
                 . ${PYTHON_ENV}/bin/activate
-                python3 -m main.py
+                python3 -m main
                 '''
             }
         }
