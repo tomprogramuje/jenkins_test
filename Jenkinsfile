@@ -14,8 +14,8 @@ pipeline {
                 sh '''
                 python3 -m venv ${PYTHON_ENV}
                 . ${PYTHON_ENV}/bin/activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
+                python3 -m pip install --upgrade pip
+                python3 -m pip install -r requirements.txt
                 '''
             }
         }
@@ -40,7 +40,7 @@ pipeline {
             steps {
                 sh '''
                 . ${PYTHON_ENV}/bin/activate
-                python3 main.py
+                python3 -m main.py
                 '''
             }
         }
