@@ -2,7 +2,7 @@
 FROM python:3.12-alpine
 
 # Install any additional packages you need
-RUN apk add --no-cache bash curl
+#RUN apk add --no-cache bash curl
 
 # Set up your working directory
 WORKDIR /app
@@ -14,4 +14,4 @@ COPY . /app
 # Example: RUN pip install -r requirements.txt
 
 # Set the default command to be run when the container starts
-CMD ["python3"]
+CMD ["python", "--version"]
